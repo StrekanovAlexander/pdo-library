@@ -70,4 +70,14 @@ class PDOQuery
     }
     return $this->pdo->query($sql)->fetchColumn();
   }
+
+  public function map($f)
+  {
+    $rows = $this->pdo->query($this->toSql())->fetchAll(\PDO::FETCH_ASSOC);
+    $result = [];
+    foreach($rows as $row) {
+      $result[] = $row; 
+    }
+    return $result; 
+  }
 } 
