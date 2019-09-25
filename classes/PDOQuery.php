@@ -71,12 +71,12 @@ class PDOQuery
     return $this->pdo->query($sql)->fetchColumn();
   }
 
-  public function map($f)
+  public function map($fn)
   {
     $rows = $this->pdo->query($this->toSql())->fetchAll(\PDO::FETCH_ASSOC);
     $result = [];
     foreach($rows as $row) {
-      $result[] = $row; 
+      $result[] = $fn($row); 
     }
     return $result; 
   }
