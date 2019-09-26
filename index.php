@@ -1,18 +1,16 @@
 <?php
-
 require_once __DIR__ . '/vendor/autoload.php';
 
-$pdo = new \PDO('mysql:host=localhost;dbname=pdo_library_db', 'root', 'root');
+$pdo = \App\PDO::pdo();
 
-$query = new \App\PDOQuery($pdo, 'users');
+$mapper = new \App\UserMapper($pdo);
 
-$query = $query->where('social', 'github');
-$query = $query->select('id', 'name');
+$user = new \App\User('Paul Smith');
+$user->addPhoto('family1', '/path/to/photo/family1');
+$user->addPhoto('party1', '/path/to/photo/party1');
+$user->addPhoto('friends1', '/path/to/photo/friends1');
 
-// var_dump(sizeof($query->all()));
-// var_dump($query->count());
+$mapper = new \App\UserMapper($pdo);
+$mapper->save($user);
 
-$coll = $query->map(function($row) {
-  return $row['id'] . '-' . $row['name'];
-});
-var_dump($coll);
+echo 'Ok';
