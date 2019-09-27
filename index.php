@@ -62,16 +62,14 @@ function where($pdo, array $params = []) {
       $exec[] = $elem;
     }
   }
+
   $where = " WHERE " . implode(" OR ", $where);
 
-  $sql .= $where;
+  $sql .= $where . " ORDER BY id";
   $stm = $pdo->prepare($sql);
   $stm->execute($exec);
-  return $stm->fetchAll();
+  return $stm->fetchAll(\PDO::FETCH_COLUMN);
 
-  // print_r($exec);
-  // echo "<br>";
-  // return $sql . $where;
 }
 
 $result = where($pdo, ['name' => ['Paul Smith','Frank Bolton'], 'social' => 'github']);
