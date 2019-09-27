@@ -48,7 +48,7 @@ $pdo = \App\PDO::pdo();
 // print_r($stmt->fetchAll(\PDO::FETCH_ASSOC));
   
 
-echo "where with sort <br>";
+// echo "where with sort <br>";
 
 function where($pdo, array $params = []) {
   $sql = "SELECT id FROM users";
@@ -56,7 +56,7 @@ function where($pdo, array $params = []) {
   $exec = [];
   foreach ($params as $key => $value) {
     $val = is_array($value) ? $value : [$value];
-    $in = implode(", ", array_fill(0, sizeof($val), '?'));
+    $in = implode(", ", array_fill(0, sizeof($val), "?"));
     $where[] = "{$key} IN ({$in})";
     foreach ($val as $elem) {
       $exec[] = $elem;
@@ -72,5 +72,71 @@ function where($pdo, array $params = []) {
 
 }
 
-$result = where($pdo, ['name' => ['Paul Smith','Frank Bolton'], 'social' => 'github']);
+// $result = where($pdo, ['name' => ['Paul Smith','Frank Bolton'], 'social' => 'github']);
+// print_r($result);
+
+// function where2($pdo, array $params = []) {
+//   $array = array_map(function($key, $value) {
+//     $val = is_array($value) ? $value : [$value];
+//     $in = implode(", ", array_fill(0, sizeof($val), "?"));
+//     return ["{$key} IN ({$in})", $val];
+//   }, array_keys($params), $params);
+//   $where = array_filter($array, function($key) {
+//     return ($key % 2 === 0);
+//   }, array_keys($array));
+
+//   print_r($where);
+
+//   return 0; // $array;
+
+  // $sql = "SELECT id FROM users";
+  // $where = [];
+  // $exec = [];
+  // foreach ($params as $key => $value) {
+  //   $val = is_array($value) ? $value : [$value];
+  //   $in = implode(", ", array_fill(0, sizeof($val), "?"));
+  //   $where[] = "{$key} IN ({$in})";
+  //   foreach ($val as $elem) {
+  //     $exec[] = $elem;
+  //   }
+  // }
+
+  // $where = " WHERE " . implode(" OR ", $where);
+
+  // $sql .= $where . " ORDER BY id";
+  // $stm = $pdo->prepare($sql);
+  // $stm->execute($exec);
+  // return $stm->fetchAll(\PDO::FETCH_COLUMN);
+
+// }
+
+// $result2 = where2($pdo, ['name' => ['Paul Smith','Frank Bolton'], 'social' => 'github']);
+// print_r($result2);
+
+
+function where3($pdo, array $params = []) {
+  $sql = "SELECT id FROM users";
+  $orderBy = "ORDER BY id";
+  if (!$params || empty($params)) {
+    $stmt = $pdo->query("{$sql} {$orderBy}");
+  } else {
+    $where = [];
+    $exec = [];
+    foreach ($params as $key => $value) {
+      $arr = is_array($value) ? $value : [$value];
+      $in = implode(", ", array_fill(0, sizeof($arr), "?"));
+      $where[] = "{$key} IN ({$in})";
+      $exec = array_merge($exec, array_values($arr));
+    }
+    $where = " WHERE " . implode(" OR ", $where);
+    $stmt = $pdo->prepare("{$sql} {$where} {$orderBy}");
+    $stmt->execute($exec);
+  }
+  return $stmt->fetchAll(\PDO::FETCH_COLUMN);
+}
+
+// $result = where3($pdo);
+// $result = where3($pdo, []);
+$result = where3($pdo, ['name' => ['Paul Smith','Frank Bolton'], 'social' => 'github']);
 print_r($result);
+
