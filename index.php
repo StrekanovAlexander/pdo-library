@@ -53,13 +53,26 @@ echo "where with sort <br>";
 function where($pdo, array $params = []) {
   $sql = "SELECT id FROM users";
   $where = [];
+  $exec = [];
   foreach ($params as $key => $value) {
-    $where[] = "{$key} IN ({$value})";
+    $val = is_array($value) ? $value : [$value];
+    $in = implode(", ", array_fill(0, sizeof($val), '?'));
+    $where[] = "{$key} IN ({$in})";
+    foreach ($val as $elem) {
+      $exec[] = $elem;
+    }
   }
   $where = " WHERE " . implode(" OR ", $where);
-  
-  return $sql . $where;
+
+  $sql .= $where;
+  $stm = $pdo->prepare($sql);
+  $stm->execute($exec);
+  return $stm->fetchAll();
+
+  // print_r($exec);
+  // echo "<br>";
+  // return $sql . $where;
 }
 
-$result = where($pdo, ['name' => 'Paul Smith', 'social' => 'github']);
+$result = where($pdo, ['name' => ['Paul Smith','Frank Bolton'], 'social' => 'github']);
 print_r($result);
