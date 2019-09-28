@@ -3,9 +3,40 @@ require_once __DIR__ . '/vendor/autoload.php';
 
 $pdo = \App\PDO::pdo();
 
-$result = where($pdo, []);
-print_r($result);
+function where($pdo, array $params) {
 
+  $sql = "SELECT id FROM users";
+  $orderBy = "ORDER BY id";
+
+  if (!$params) {
+    $stmt = $pdo->query("{$sql} {$orderBy}");
+    return $stmt->fetchAll(\PDO::FETCH_COLUMN);
+  } 
+    
+  $where = [];
+  $exec = [];
+
+  foreach ($params as $key => $value) {
+    if (!is_array($value) && $value) {
+      $where[] = "{$key} = ?";
+      $exec[] = $value;
+    } else {
+      if ($value) {
+        $in = implode(", ", array_fill(0, sizeof($value), "?"));
+        $where[] = "{$key} IN ({$in})";
+        $exec = array_merge($exec, array_values($value));
+      }
+    }
+  }
+  $where = $where ? "WHERE " . implode(" OR ", $where) : "";
+  $stmt = $pdo->prepare("{$sql} {$where} {$orderBy}");
+  $stmt->execute($exec);
+
+  return $stmt->fetchAll(\PDO::FETCH_COLUMN);
+}
+
+$result = where($pdo, ['name' => ['john', 'adel']]);
+print_r($result);
 
 /*
 where($pdo, []); // select id from users order by id
