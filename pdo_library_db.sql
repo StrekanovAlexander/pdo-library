@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1:3306
--- Generation Time: Sep 25, 2019 at 08:05 AM
+-- Generation Time: Sep 28, 2019 at 07:46 AM
 -- Server version: 5.6.38
 -- PHP Version: 5.6.32
 
@@ -29,22 +29,32 @@ SET time_zone = "+00:00";
 --
 
 CREATE TABLE `users` (
-  `id` int(11) DEFAULT NULL,
-  `name` varchar(255) DEFAULT NULL,
-  `social` varchar(255) DEFAULT NULL,
-  `age` int(11) DEFAULT NULL
+  `id` int(11) NOT NULL,
+  `name` varchar(255) NOT NULL,
+  `social` varchar(255) NOT NULL,
+  `age` tinyint(4) NOT NULL,
+  `source` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
 -- Dumping data for table `users`
 --
 
-INSERT INTO `users` (`id`, `name`, `social`, `age`) VALUES
-(1, 'John Doe', 'linkedin', 20),
-(2, 'Paul Smith', 'github', 23),
-(3, 'Sara Waters', 'github', 24),
-(4, 'Frank Bolton', 'yahoo', 23),
-(4, 'Robert Mors', 'linkedin', 21);
+INSERT INTO `users` (`id`, `name`, `social`, `age`, `source`) VALUES
+(1, 'john', 'yahoo', 26, 'yahoo'),
+(3, 'adel', 'gmail', 23, 'gmail'),
+(8, 'Mike', 'bing', 23, 'bing'),
+(9, 'ada', 'yandex', 29, 'yandex');
+
+--
+-- Indexes for dumped tables
+--
+
+--
+-- Indexes for table `users`
+--
+ALTER TABLE `users`
+  ADD PRIMARY KEY (`id`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
