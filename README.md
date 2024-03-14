@@ -1,1 +1,2 @@
-# pdo-library
+# PDO library
+Custom functional
